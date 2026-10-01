@@ -418,7 +418,7 @@ weather_df |>
 ![](01_viz_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
 
 ``` r
-# figure out whatthis does
+# figure out what this does
 #knitr::opts_chunk$set(
 #  fig.width = 6,
 #  fig.asp = .6,
