@@ -7,6 +7,7 @@ output: github_document
 
 ```{r}
 library(tidyverse)
+library(patchwork)
 library(p8105.datasets)
 
 data("weather_df")
@@ -69,4 +70,153 @@ weather_df |>
     name = "Location",
     discrete = TRUE
   )
+```
+
+## Themes
+
+```{r}
+weather_df |>
+  ggplot(aes(x = tmax, y = tmin, color = name)) +
+  geom_point() +
+  viridis::scale_color_viridis(
+    name = "Location",
+    discrete = TRUE
+  ) +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+weather_df |>
+  ggplot(aes(x = tmax, y = tmin, color = name)) +
+  geom_point() +
+  viridis::scale_color_viridis(
+    name = "Location",
+    discrete = TRUE
+  ) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+weather_df |>
+  ggplot(aes(x = tmax, y = tmin, color = name)) +
+  geom_point() +
+  viridis::scale_color_viridis(
+    name = "Location",
+    discrete = TRUE
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+weather_df |>
+  ggplot(aes(x = tmax, y = tmin, color = name)) +
+  geom_point() +
+  viridis::scale_color_viridis(
+    name = "Location",
+    discrete = TRUE
+  ) +
+  theme_classic() +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+weather_df |>
+  ggplot(aes(x = tmax, y = tmin, color = name)) +
+  geom_point() +
+  viridis::scale_color_viridis(
+    name = "Location",
+    discrete = TRUE
+  ) +
+  # order matters. If you do this in this order as opposed to the other, 
+  # then the second fn will overwrite the first.
+  # this is why the legend is on the right instead of the bottom
+  theme(legend.position = "bottom") +
+  theme_minimal()
+```
+
+Update the tmax vs date plot 
+
+```{r}
+# my effort
+ggp_weather = 
+  weather_df |>
+  ggplot(aes(x = date, y = tmax, color = name)) +
+  geom_point(aes(size = prcp), alpha = .5) +
+  facet_grid(. ~ name) +
+  viridis::scale_color_viridis(
+    name = "Location",
+    discrete = TRUE
+  ) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+# jeff's effort
+weather_df |>
+  ggplot(aes(x = date, y = tmax, color = name)) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  labs(
+    title = "Seasonal trends in Max Temp",
+    x = "Date",
+    y = "Max Temp",
+    caption = "Max daily temp in three weather stations in 2021 and 2020",
+    color = "location"
+  ) +
+  viridis::scale_color_viridis(
+    name = "Location",
+    discrete = TRUE
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+## Two more weird but useful plot things
+
+```{r}
+central_park_df =
+  weather_df |>
+  filter(name == "CentralPark_NY")
+
+molokai_df =
+  weather_df |>
+  filter(name == "Molokai_HI")
+
+ggplot(molokai_df, aes(x = date, y = tmax, color = name)) +
+  geom_point()
+
+# add a completely different geometry to this plot that has a different df
+ggplot(molokai_df, aes(x = date, y = tmax, color = name)) +
+  geom_point() +
+  geom_line(data = central_park_df)
+```
+
+multiple panels with different plot types.
+
+```{r}
+ggp_tmax_tmin =
+  weather_df |>
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point() +
+  theme(legend.position = "none")
+
+ggp_prcp_density =
+  weather_df |>
+  filter(prcp > 0) |>
+  ggplot(aes(x = prcp, fill = name)) +
+  geom_density(alpha = .5) +
+  theme(legend.position = "none")
+  
+ggp_seasonal =
+  weather_df |>
+  ggplot(aes(x = date, y = tmax, color = name)) +
+  geom_point() +
+  theme(legend.position = "bottom")
+
+# using patchwork to take these panels and put them together
+# mathematical symbols show position
+(ggp_tmax_tmin + ggp_prcp_density) / ggp_seasonal
 ```
