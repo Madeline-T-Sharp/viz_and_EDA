@@ -220,3 +220,35 @@ ggp_seasonal =
 # mathematical symbols show position
 (ggp_tmax_tmin + ggp_prcp_density) / ggp_seasonal
 ```
+
+## Data manipulation
+
+Start with factors. (Factors are labels sitting on top of numbers)
+
+boxplots!
+
+```{r}
+# if you don't tell ggplot what order to put plots in before using ggplot, 
+# it will automatically choose alphabetical order
+weather_df |>
+  ggplot(aes(x = name, y = tmax)) +
+  geom_boxplot()
+```
+
+```{r}
+# fct_relevel makes variables factors and how you would like to order them
+weather_df |>
+  mutate(name = fct_relevel(name, c("Molokai_HI", "CentralPark_NY", 
+                                    "Waterhole_WA"))) |>
+  ggplot(aes(x = name, y = tmax)) +
+  geom_boxplot()
+```
+
+```{r}
+weather_df |>
+  # reordering is not a ggplot problem. Must be fixed outside ggplot.
+  # putting things in the order you want is a factor problem; not a ggplot one
+  mutate(name = fct_reorder(name, tmax)) |>
+  ggplot(aes(x = name, y = tmax)) +
+  geom_boxplot()
+```

@@ -311,3 +311,57 @@ ggp_seasonal =
     ## (`geom_point()`).
 
 ![](02_viz_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+## Data manipulation
+
+Start with factors. (Factors are labels sitting on top of numbers)
+
+boxplots!
+
+``` r
+# if you don't tell ggplot what order to put plots in before using ggplot, 
+# it will automatically choose alphabetical order
+weather_df |>
+  ggplot(aes(x = name, y = tmax)) +
+  geom_boxplot()
+```
+
+    ## Warning: Removed 17 rows containing non-finite outside the scale range
+    ## (`stat_boxplot()`).
+
+![](02_viz_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+
+``` r
+# fct_relevel makes variables factors and how you would like to order them
+weather_df |>
+  mutate(name = fct_relevel(name, c("Molokai_HI", "CentralPark_NY", 
+                                    "Waterhole_WA"))) |>
+  ggplot(aes(x = name, y = tmax)) +
+  geom_boxplot()
+```
+
+    ## Warning: Removed 17 rows containing non-finite outside the scale range
+    ## (`stat_boxplot()`).
+
+![](02_viz_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+
+``` r
+weather_df |>
+  # reordering is not a ggplot problem. Must be fixed outside ggplot.
+  # putting things in the order you want is a factor problem; not a ggplot one
+  mutate(name = fct_reorder(name, tmax)) |>
+  ggplot(aes(x = name, y = tmax)) +
+  geom_boxplot()
+```
+
+    ## Warning: There was 1 warning in `mutate()`.
+    ## ℹ In argument: `name = fct_reorder(name, tmax)`.
+    ## Caused by warning:
+    ## ! `fct_reorder()` removing 17 missing values.
+    ## ℹ Use `.na_rm = TRUE` to silence this message.
+    ## ℹ Use `.na_rm = FALSE` to preserve NAs.
+
+    ## Warning: Removed 17 rows containing non-finite outside the scale range
+    ## (`stat_boxplot()`).
+
+![](02_viz_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
